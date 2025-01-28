@@ -1,3 +1,9 @@
-# Item keeper
+# Культура разработки ПО с открытым исходным кодом
+_РПО 14221_
 
-Keep and returns items to user
+_Левитан Всеволод, Степанов Ярослав_
+
+# Задания
+## git-branches
+[README.md](./git-branches/README.md)
+[Папка git-branches](./git-branches/)
