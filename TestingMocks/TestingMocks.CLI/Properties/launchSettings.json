@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TestingMocks.CLI": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
