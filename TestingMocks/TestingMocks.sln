@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingMocks.Models", "TestingMocks.Models\TestingMocks.Models.csproj", "{F9040E89-D96D-48E4-8731-690BA780AAC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingMocks.UserApiTests", "TestingMocks.UserApiTests\TestingMocks.UserApiTests\TestingMocks.UserApiTests.csproj", "{89B61D68-E2FB-4947-AC21-0644110FCE31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingMocks.UserApiTests", "TestingMocks.UserApiTests\TestingMocks.UserApiTests.csproj", "{89B61D68-E2FB-4947-AC21-0644110FCE31}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingMocks.CLI", "TestingMocks.CLI\TestingMocks.CLI.csproj", "{9535DA49-3F40-42CB-AD39-08D83793671F}"
 EndProject
