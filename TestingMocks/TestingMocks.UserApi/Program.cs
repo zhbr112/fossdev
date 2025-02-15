@@ -17,7 +17,6 @@ if (builder.Environment.IsDevelopment())
             ServiceLifetime.Singleton
         );
 }
-    
 
 var app = builder.Build();
 
@@ -26,7 +25,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapGet("/registration", async (UserDTO userDTO, UserDbContext db) =>
+app.MapPost("/registration", async (UserDTO userDTO, UserDbContext db) =>
 {
     string passwordHash;
     using (var sha256 = SHA256.Create())
@@ -38,10 +37,9 @@ app.MapGet("/registration", async (UserDTO userDTO, UserDbContext db) =>
     User user = new(userDTO.Username, passwordHash);
 
     ValidationContext context = new(user);
-    List<ValidationResult> results = [];
 
-    if (!Validator.TryValidateObject(user, context, null)) 
-        Results.BadRequest("Неверно указаны данные");
+    if (!Validator.TryValidateObject(user, context, null, true)) 
+        return Results.BadRequest("РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ");
 
     await db.Users.AddAsync(user);
     
