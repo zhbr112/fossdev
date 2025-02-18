@@ -1,51 +1,51 @@
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using System.Text;
-using TestingMocks.Models;
+using Microsoft.EntityFrameworkCore;
+using TestingMocks.UserApi.Configuration;
 using TestingMocks.UserApi.Data;
+using TestingMocks.UserApi.DTO;
+using TestingMocks.UserApi.Exceptions;
+using TestingMocks.UserApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Настройки
+builder.Services.AddOptions<AuthConfiguration>()
+    .Bind(builder.Configuration.GetSection("Auth"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 builder.Services.AddOpenApi();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ExceptionHandler>();
 
-if (builder.Environment.IsDevelopment())
+// БД
+builder.Services.AddDbContext<UserDbContext>(opt =>
 {
-    builder.Services.AddDbContext<UserDbContext>
-        (
-            conf => { conf.UseInMemoryDatabase("tmpdb"); },
-            ServiceLifetime.Singleton
-        );
-}
+    if (builder.Environment.IsDevelopment()) opt.UseInMemoryDatabase("DevDB");
+    else throw new NotImplementedException("No production DB assigned yet.");
+}, builder.Environment.IsDevelopment() ? ServiceLifetime.Singleton : ServiceLifetime.Scoped);
 
+// Сервисы
+builder.Services.AddScoped<UserService>();
+builder.Services.AddTransient<PasswordHasherService>();
+
+// Runtime-конфигурация
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseExceptionHandler();
 }
 
-app.MapPost("/registration", async (UserDTO userDTO, UserDbContext db) =>
+// Эндпоинты
+var authGroup = app.MapGroup("/auth");
+
+authGroup.MapPost("/register", async (UserAuthDataDTO userDTO, UserService users) =>
 {
-    string passwordHash;
-    using (var sha256 = SHA256.Create())
-    {
-        var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password));
-        passwordHash = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-    }
+    var user = await users.RegisterAsync(userDTO.Username, userDTO.Password);
 
-    User user = new(userDTO.Username, passwordHash);
-
-    ValidationContext context = new(user);
-
-    if (!Validator.TryValidateObject(user, context, null, true)) 
-        return Results.BadRequest("Неверные данные");
-
-    await db.Users.AddAsync(user);
-    
-    await db.SaveChangesAsync();
-
-    return Results.Ok();
+    return Results.Ok((UserDTO)user);
 });
 
 app.Run();
