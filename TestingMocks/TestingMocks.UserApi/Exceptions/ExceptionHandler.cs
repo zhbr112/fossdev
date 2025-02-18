@@ -11,6 +11,7 @@ public class ExceptionHandler : IExceptionHandler
         {
             ValidationException or BadRequestException => StatusCodes.Status400BadRequest,
             UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+            NotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
 
@@ -18,7 +19,7 @@ public class ExceptionHandler : IExceptionHandler
 
         await httpContext.Response.WriteAsJsonAsync(new
         {
-            Detail = status == 500 ? null : exception.Message,
+            Detail = status == StatusCodes.Status500InternalServerError ? null : exception.Message,
             Status = status
         }, cancellationToken: cancellationToken);
 

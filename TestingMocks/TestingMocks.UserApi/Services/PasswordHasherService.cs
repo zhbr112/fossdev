@@ -9,10 +9,9 @@ public class PasswordHasherService(IOptions<AuthConfiguration> jwtConfig)
 {
     public string HashPassword(string password)
     {
-        var salt = Encoding.ASCII.GetBytes(jwtConfig.Value.PasswordSalt);
         var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
             password: password,
-            salt: salt,
+            salt: jwtConfig.Value.PasswordSaltBytes,
             prf: KeyDerivationPrf.HMACSHA256,
             iterationCount: 100_000,
             numBytesRequested: 256 / 8

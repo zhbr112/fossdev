@@ -1,6 +1,6 @@
 namespace TestingMocks.UserApi.Exceptions;
 
-public class BadRequestException(string message, string? fieldName = null) : Exception
+public class BadRequestException(string message, params string[] fieldNames) : Exception
 {
-    public override string Message { get; } = fieldName is null ? message : $"{message} (Field: {fieldName})";
+    public override string Message { get; } = fieldNames.Length == 0 ? message : $"{message} (Fields: [{string.Join(", ", fieldNames)}])";
 }
