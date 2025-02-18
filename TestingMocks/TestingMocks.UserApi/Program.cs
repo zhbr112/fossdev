@@ -1,7 +1,10 @@
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CsvHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using TestingMocks.Models;
 using TestingMocks.UserApi.Configuration;
 using TestingMocks.UserApi.Data;
 using TestingMocks.UserApi.DTO;
@@ -88,6 +91,13 @@ authGroup.MapPost("/login", async (UserAuthDataDTO authData, UserService users, 
 
 var usersGroup = app.MapGroup("/users");
 
+usersGroup.MapGet("/", async (UserService userService) =>
+{
+    var users = await userService.GetAllUsersAsync();
+
+    return users.Select(u => (UserDTO)u);
+});
+
 usersGroup.MapGet("/me", async (UserService users, ClaimsPrincipal claims) =>
 {
     var username = (claims.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name)?.Value)
@@ -98,5 +108,22 @@ usersGroup.MapGet("/me", async (UserService users, ClaimsPrincipal claims) =>
     return (UserDTO)user;
 }).RequireAuthorization();
 
-app.Run();
+var dataGroup = app.MapGroup("/userData");
 
+dataGroup.MapPost("/update", async (HttpRequest request, UserService users, ClaimsPrincipal claims) =>
+{
+    using var reader = new StreamReader(request.Body);
+    using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+    var username = (claims.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name)?.Value)
+        ?? throw new UnauthorizedAccessException();
+
+    var userDetails = await csv.GetRecordsAsync<UserDetails>().FirstOrDefaultAsync()
+        ?? throw new BadRequestException("Malformed CSV.");
+
+    var updatedUser = await users.SetUserDetails(username, userDetails);
+
+    return (UserDTO)updatedUser;
+}).RequireAuthorization();
+
+app.Run();
