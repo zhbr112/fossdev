@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestingMocks.Models\TestingMocks.Models.csproj" />
+    <ProjectReference Include="..\TestingMocks.Communication\TestingMocks.Communication.csproj" />
   </ItemGroup>
 
 </Project>
