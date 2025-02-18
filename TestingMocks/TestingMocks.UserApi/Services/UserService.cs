@@ -39,8 +39,29 @@ public class UserService(UserDbContext db, PasswordHasherService hasher)
 
     public async Task<User> GetUserAsync(string username)
     {
+        var user = await db.Users
+            .Include(u => u.Details)
+            .FirstOrDefaultAsync(u => u.Username == username)
+            ?? throw new NotFoundException("User not found");
+        return user;
+    }
+
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        return await db.Users.Include(u => u.Details).ToListAsync();
+    }
+
+    public async Task<User> SetUserDetails(string username, UserDetails details)
+    {
         var user = await db.Users.FindAsync(username)
             ?? throw new NotFoundException("User not found");
+
+        Validator.ValidateObject(details, new(details), true);
+
+        user.Details = details;
+
+        await db.SaveChangesAsync();
+
         return user;
     }
 }

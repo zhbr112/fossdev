@@ -9,4 +9,6 @@ public class User
 
     [Required]
     public required string PasswordHash { get; set; }
+
+    public UserDetails? Details { get; set; }
 }
