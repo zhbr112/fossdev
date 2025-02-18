@@ -1,52 +1,102 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using System.Text;
-using TestingMocks.Models;
+using TestingMocks.UserApi.Configuration;
 using TestingMocks.UserApi.Data;
+using TestingMocks.UserApi.DTO;
+using TestingMocks.UserApi.Exceptions;
+using TestingMocks.UserApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Настройки
+builder.Services.AddOptions<AuthConfiguration>()
+    .Bind(builder.Configuration.GetSection("Auth"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 builder.Services.AddOpenApi();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ExceptionHandler>();
 
-if (builder.Environment.IsDevelopment())
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opt =>
+    {
+        var jwtConfig = builder.Configuration.GetSection("Auth:Jwt").Get<JwtConfiguration>()!;
+
+        opt.TokenValidationParameters = new()
+        {
+            ValidateIssuer = jwtConfig.Issuer is not null,
+            ValidIssuer = jwtConfig.Issuer,
+            ValidateAudience = jwtConfig.Audience is not null,
+            ValidAudience = jwtConfig.Audience,
+            ValidateLifetime = true,
+            IssuerSigningKey = jwtConfig.SymmetricSecurityKey,
+            ValidateIssuerSigningKey = true
+        };
+    });
+builder.Services.AddAuthorization();
+
+// БД
+builder.Services.AddDbContext<UserDbContext>(opt =>
 {
-    builder.Services.AddDbContext<UserDbContext>
-        (
-            conf => { conf.UseInMemoryDatabase("tmpdb"); },
-            ServiceLifetime.Singleton
-        );
-}
+    if (builder.Environment.IsDevelopment()) opt.UseInMemoryDatabase("DevDB");
+    else throw new NotImplementedException("No production DB assigned yet.");
+}, builder.Environment.IsDevelopment() ? ServiceLifetime.Singleton : ServiceLifetime.Scoped);
 
+// Сервисы
+builder.Services.AddTransient<JwtSecurityTokenHandler>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddTransient<PasswordHasherService>();
+builder.Services.AddTransient<JwtTokenService>();
+
+// Runtime-конфигурация
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseExceptionHandler();
 }
 
-app.MapPost("/registration", async (UserDTO userDTO, UserDbContext db) =>
+// Эндпоинты
+var authGroup = app.MapGroup("/auth");
+
+authGroup.MapPost("/register", async (UserAuthDataDTO authData, UserService users) =>
 {
-    string passwordHash;
-    using (var sha256 = SHA256.Create())
-    {
-        var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password));
-        passwordHash = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-    }
+    var user = await users.RegisterAsync(authData.Username, authData.Password);
 
-    User user = new(userDTO.Username, passwordHash);
-
-    ValidationContext context = new(user);
-
-    if (!Validator.TryValidateObject(user, context, null, true)) 
-        return Results.BadRequest("Неверные данные");
-
-    await db.Users.AddAsync(user);
-    
-    await db.SaveChangesAsync();
-
-    return Results.Ok();
+    return (UserDTO)user;
 });
+
+authGroup.MapPost("/login", async (UserAuthDataDTO authData, UserService users, JwtTokenService jwt) =>
+{
+    var user = await users.LoginAsync(authData.Username, authData.Password);
+
+    var token = jwt.GenerateAccessToken(user);
+
+    return new
+    {
+        User = (UserDTO)user,
+        Token = token
+    };
+});
+
+var usersGroup = app.MapGroup("/users");
+
+usersGroup.MapGet("/me", async (UserService users, ClaimsPrincipal claims) =>
+{
+    var username = (claims.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name)?.Value)
+        ?? throw new UnauthorizedAccessException();
+
+    var user = await users.GetUserAsync(username);
+
+    return (UserDTO)user;
+}).RequireAuthorization();
 
 app.Run();
 
