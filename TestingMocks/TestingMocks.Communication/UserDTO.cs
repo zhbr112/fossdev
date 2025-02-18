@@ -1,6 +1,6 @@
 using TestingMocks.Models;
 
-namespace TestingMocks.UserApi.DTO;
+namespace TestingMocks.Communication;
 
 public record UserDTO(string Username, UserDetailsDTO? Details)
 {

@@ -4,10 +4,10 @@ using System.Security.Claims;
 using CsvHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using TestingMocks.Communication;
 using TestingMocks.Models;
 using TestingMocks.UserApi.Configuration;
 using TestingMocks.UserApi.Data;
-using TestingMocks.UserApi.DTO;
 using TestingMocks.UserApi.Exceptions;
 using TestingMocks.UserApi.Services;
 
