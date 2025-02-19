@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Diagnostics;
+using TestingMocks.Communication;
 
 namespace TestingMocks.UserApi.Exceptions;
 
@@ -17,11 +18,10 @@ public class ExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = status;
 
-        await httpContext.Response.WriteAsJsonAsync(new
-        {
-            Detail = status == StatusCodes.Status500InternalServerError ? null : exception.Message,
-            Status = status
-        }, cancellationToken: cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(new ErrorDetailDTO(
+            Detail: status == StatusCodes.Status500InternalServerError ? null : exception.Message,
+            Status: status
+        ), cancellationToken: cancellationToken);
 
         return true;
     }

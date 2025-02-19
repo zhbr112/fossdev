@@ -82,11 +82,7 @@ authGroup.MapPost("/login", async (UserAuthDataDTO authData, UserService users, 
 
     var token = jwt.GenerateAccessToken(user);
 
-    return new
-    {
-        User = (UserDTO)user,
-        Token = token
-    };
+    return new LoginResponseDTO((UserDTO)user, token);
 });
 
 var usersGroup = app.MapGroup("/users");
@@ -113,6 +109,7 @@ var dataGroup = app.MapGroup("/userData");
 dataGroup.MapPost("/update", async (HttpRequest request, UserService users, ClaimsPrincipal claims) =>
 {
     using var reader = new StreamReader(request.Body);
+
     using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
     var username = (claims.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name)?.Value)
