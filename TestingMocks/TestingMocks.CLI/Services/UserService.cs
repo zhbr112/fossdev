@@ -5,7 +5,7 @@ using TestingMocks.Communication;
 
 namespace TestingMocks.CLI.Services;
 
-public class UserService(HttpClient http)
+public class UserService(HttpClient http) : IDisposable
 {
     public bool IsAuthenticated => currentUser is not null;
 
@@ -67,6 +67,15 @@ public class UserService(HttpClient http)
 
     public async Task<UserDTO> SetUserDetailsAsync(string name, int age, string city)
     {
+        var detailsDTO = new UserDetailsDTO
+        {
+            Name = name,
+            Age = age,
+            City = city
+        };
+
+        Validator.ValidateObject(detailsDTO, new(detailsDTO), true);
+
         Console.WriteLine($"Name,Age,City\n{name},{age},{city}");
 
         var res = await http.PostAsync("/userData/update", new StringContent(
@@ -77,5 +86,11 @@ public class UserService(HttpClient http)
 
         return await res.Content.ReadFromJsonAsync<UserDTO>()
             ?? throw new HttpRequestException("Couldn't get updated user from the backend.");
+    }
+
+    public void Dispose()
+    {
+        http.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
