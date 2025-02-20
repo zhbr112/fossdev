@@ -10,4 +10,4 @@ _Левитан Всеволод, Степанов Ярослав_
 
 ## TestingMocks
 [README.md](./TestingMocks/README.md)
-[Папка git-branches](./TestingMocks/)
+[Папка TestingMocks](./TestingMocks/)
