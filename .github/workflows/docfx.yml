@@ -36,6 +36,20 @@ jobs:
       with:
         path: docfx/_site/
 
-    - name: Publish GitHub Pages
-      id: publish
-      uses: actions/deploy-pages@v4
+  deploy:
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Publish GitHub Pages
+        id: publish
+        uses: actions/deploy-pages@v4
