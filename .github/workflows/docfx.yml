@@ -1,0 +1,37 @@
+name: Build docfx documentation
+
+on:
+  push:
+    branches:
+        - master
+    paths-ignore:
+      - 'appsettings.json'
+      - 'appsettings.*.json'
+      - '.gitignore'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v3
+      with:
+          dotnet-version: "9.x"
+    
+    - name: Setup DocFx
+      uses: clFaster/docfx-setup-action@v1
+
+    - name: Build Documentation
+      uses: clFaster/docfx-build-action@v1
+      with:
+          docfx-file-path: "docfx/docfx.json"
+
+    - name: Upload built docfx files to GitHub Pages
+      id: deployment
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docfx/_site/
