@@ -3,7 +3,9 @@ using TestingMocks.CLI.Services;
 
 namespace TestingMocks.CLI.Windows;
 
-/// Окно обновления данных пользователей
+/// <summary>
+/// Окно обновления данных пользователя
+/// </summary>
 public class UpdateDataModal : Window
 {
     /// <summary>
