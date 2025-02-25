@@ -3,6 +3,9 @@ using TestingMocks.CLI.Services;
 
 namespace TestingMocks.CLI.Windows;
 
+/// <summary>
+/// Приветственное окно
+/// </summary>
 public class WelcomeWindow : Window
 {
     private readonly Button loginButton;
@@ -13,6 +16,10 @@ public class WelcomeWindow : Window
 
     private readonly UserService userService;
 
+    /// <summary>
+    /// Создать приветственное окно
+    /// </summary>
+    /// <param name="userService">Сервис работы с бэкедом</param>
     public WelcomeWindow(UserService userService)
     {
         this.userService = userService;

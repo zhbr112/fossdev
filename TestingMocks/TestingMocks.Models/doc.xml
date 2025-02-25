@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TestingMocks.Models</name>
+    </assembly>
+    <members>
+        <member name="T:TestingMocks.Models.User">
+            <summary>
+            Сущность пользователя
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:TestingMocks.Models.User.Username" -->
+        <member name="P:TestingMocks.Models.User.PasswordHash">
+            <summary>
+            Захэшированный пароль
+            </summary>
+        </member>
+        <member name="P:TestingMocks.Models.User.Details">
+            <summary>
+            Информация о пользователе
+            </summary>
+        </member>
+        <member name="T:TestingMocks.Models.UserDetails">
+            <summary>
+            Сущность информации о пользователе
+            </summary>
+            <remarks>
+            Привязана к сущности User
+            </remarks>
+            <seealso cref="T:TestingMocks.Models.User"/>
+        </member>
+        <member name="P:TestingMocks.Models.UserDetails.Name">
+            <summary>
+            Фактическое имя пользователя
+            </summary>
+            <remarks>
+            Длина от 2 до 64 символов
+            </remarks>
+        </member>
+        <member name="P:TestingMocks.Models.UserDetails.Age">
+            <summary>
+            Возраст пользователя
+            </summary>
+            <remarks>
+            Принимает значения от 0 до 128
+            </remarks>
+        </member>
+        <member name="P:TestingMocks.Models.UserDetails.City">
+            <summary>
+            Город проживания пользователя
+            </summary>
+            <remarks>
+            Длина от 2 до 128 символов
+            </remarks>
+        </member>
+    </members>
+</doc>

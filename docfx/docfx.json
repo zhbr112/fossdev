@@ -1,0 +1,55 @@
+{
+  "metadata": [
+    {
+      "src": [{
+        "files": ["TestingMocks.sln"],
+        "src": "../TestingMocks"
+      }],
+      "dest": "api",
+      "includePrivateMembers": false,
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false,
+      "noRestore": false,
+      "namespaceLayout": "flattened",
+      "memberLayout": "samePage",
+      "allowCompilationErrors": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": ["api/**.yml", "api/index.md"]
+      },
+      {
+        "files": ["README.md"],
+        "src": "../"
+      },
+      {
+        "files": ["git-branches/README.md", "TestingMocks/README.md"],
+        "src": "../"
+      },
+      {
+        "files": ["articles/**.md", "articles/**/toc.yml", "toc.yml", "*.md"]
+      }
+    ],
+    "resource": [
+      {
+        "files": ["images/**"]
+      }
+    ],
+    "output": "_site",
+    "globalMetadata": {
+      "_appTitle": "fossdev",
+      "_appFooter": "Левитан В., Степанов Я.",
+      "_enableSearch": true
+    },
+    "fileMetadata": {},
+    "template": ["default"],
+    "postProcessors": [],
+    "markdownEngineName": "markdig",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

@@ -3,8 +3,15 @@ using TestingMocks.CLI.Services;
 
 namespace TestingMocks.CLI.Windows;
 
+/// <summary>
+/// Окно обновления данных пользователя
+/// </summary>
 public class UpdateDataModal : Window
 {
+    /// <summary>
+    /// Создать окно обновления данных пользователя
+    /// </summary>
+    /// <param name="userService">Сервис работы с бэкендом</param>
     public UpdateDataModal(UserService userService)
     {
         Title = "TestingMocks CLI (Ctrl + Q = назад/выход). Обновление данных.";

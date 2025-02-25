@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TestingMocks.CLI</name>
+    </assembly>
+    <members>
+        <member name="T:TestingMocks.CLI.Services.UserService">
+            <summary>
+            Сервис работы с API пользователей
+            </summary>
+            <param name="httpClient">Используемый HTTP-клиент</param>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Сервис работы с API пользователей
+            </summary>
+            <param name="httpClient">Используемый HTTP-клиент</param>
+        </member>
+        <member name="P:TestingMocks.CLI.Services.UserService.IsAuthenticated">
+            <summary>
+            Аутентифицирован ли текущий пользователь
+            </summary>
+        </member>
+        <member name="P:TestingMocks.CLI.Services.UserService.CurrentUser">
+            <summary>
+            Текущий пользователь
+            </summary>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.RegisterAsync(System.String,System.String)">
+            <summary>
+            Зарегистрировать пользователя
+            </summary>
+            <param name="username">Имя пользователя (логин)</param>
+            <param name="password">Пароль</param>
+            <returns>Информация о пользователе</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">Ошибка HTTP-запроса</exception>
+            <exception cref="T:System.NullReferenceException">Ошибка парсинга JSON</exception>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.LoginAsync(System.String,System.String)">
+            <summary>
+            Войти в аккаунт
+            </summary>
+            <param name="username">Имя пользователя (логин)</param>
+            <param name="password">Пароль</param>
+            <returns>Информация о текущем пользователе и токен авторизации</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">Ошибка HTTP-запроса</exception>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.GetCurrentUserAsync">
+            <summary>
+            Получить текущего пользователя
+            </summary>
+            <returns>Информация о текущем авторизованном пользователе</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">Ошибка HTTP-запроса</exception>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.GetAllUsersAsync">
+            <summary>
+            Получить список всех пользователей
+            </summary>
+            <returns>Список информации о пользователях</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">Ошибка HTTP-запроса</exception>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.SetUserDetailsAsync(System.String)">
+            <summary>
+            Обновить информацию о текущем пользователе
+            </summary>
+            <param name="filename">Путь до CSV-файла</param>
+            <returns>Обновленный пользователь</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">Ошибка HTTP-запроса</exception>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.SetUserDetailsAsync(System.String,System.Int32,System.String)">
+            <summary>
+            Обновить информацию о текущем пользователе
+            </summary>
+            <param name="name">Фактическое имя пользователя</param>
+            <param name="age">Возраст пользователя</param>
+            <param name="city">Город проживания пользователя</param>
+            <returns>Обновленный пользователь</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">Ошибка HTTP-запроса</exception>
+        </member>
+        <member name="M:TestingMocks.CLI.Services.UserService.Dispose">
+            <summary>
+            Закрыть сессию
+            </summary>
+        </member>
+        <member name="T:TestingMocks.CLI.Windows.UpdateDataModal">
+            Окно обновления данных пользователей
+        </member>
+        <member name="M:TestingMocks.CLI.Windows.UpdateDataModal.#ctor(TestingMocks.CLI.Services.UserService)">
+            <summary>
+            Создать окно обновления данных пользователя
+            </summary>
+            <param name="userService">Сервис работы с бэкендом</param>
+        </member>
+        <member name="T:TestingMocks.CLI.Windows.UserAuthModal">
+            <summary>
+            Окно аутентификацации и регистрации пользователя
+            </summary>
+        </member>
+        <member name="E:TestingMocks.CLI.Windows.UserAuthModal.OnLogin">
+            <summary>
+            Событие при входе в аккаунт
+            </summary>
+        </member>
+        <member name="E:TestingMocks.CLI.Windows.UserAuthModal.OnRegister">
+            <summary>
+            Событие при регистрации
+            </summary>
+        </member>
+        <member name="M:TestingMocks.CLI.Windows.UserAuthModal.#ctor(TestingMocks.CLI.Services.UserService,System.Boolean)">
+            <summary>
+            Создать окно аутентификацации и регистрации пользователя
+            </summary>
+            <param name="userService">Сервис работы с бэкендом</param>
+            <param name="isLogin">Использовать аутентификацию вместо регистрации</param>
+        </member>
+        <member name="T:TestingMocks.CLI.Windows.ViewUsersModal">
+            <summary>
+            Окно просмотра списка пользователей
+            </summary>
+        </member>
+        <member name="M:TestingMocks.CLI.Windows.ViewUsersModal.#ctor(TestingMocks.CLI.Services.UserService)">
+            <summary>
+            Создать окно просмотра списка пользователей
+            </summary>
+            <param name="userService">Сервис работы с бэкендом</param>
+        </member>
+        <member name="T:TestingMocks.CLI.Windows.WelcomeWindow">
+            <summary>
+            Приветственное окно
+            </summary>
+        </member>
+        <member name="M:TestingMocks.CLI.Windows.WelcomeWindow.#ctor(TestingMocks.CLI.Services.UserService)">
+            <summary>
+            Создать приветственное окно
+            </summary>
+            <param name="userService">Сервис работы с бэкедом</param>
+        </member>
+    </members>
+</doc>
