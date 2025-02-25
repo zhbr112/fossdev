@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TestingMocks.Communication</name>
+    </assembly>
+    <members>
+        <member name="T:TestingMocks.Communication.ErrorDetailDTO">
+            <summary>
+            Информация об ошибка
+            </summary>
+            <param name="Detail">Описание ошибки</param>
+            <param name="Status">HTTP-код ошибки</param>
+        </member>
+        <member name="M:TestingMocks.Communication.ErrorDetailDTO.#ctor(System.String,System.Int32)">
+            <summary>
+            Информация об ошибка
+            </summary>
+            <param name="Detail">Описание ошибки</param>
+            <param name="Status">HTTP-код ошибки</param>
+        </member>
+        <member name="P:TestingMocks.Communication.ErrorDetailDTO.Detail">
+            <summary>Описание ошибки</summary>
+        </member>
+        <member name="P:TestingMocks.Communication.ErrorDetailDTO.Status">
+            <summary>HTTP-код ошибки</summary>
+        </member>
+        <member name="T:TestingMocks.Communication.LoginResponseDTO">
+            <summary>
+            Результат аутентификации
+            </summary>
+            <param name="User">Информация о текущем пользователе</param>
+            <param name="AccessToken">Токен аутентификации</param>
+        </member>
+        <member name="M:TestingMocks.Communication.LoginResponseDTO.#ctor(TestingMocks.Communication.UserDTO,System.String)">
+            <summary>
+            Результат аутентификации
+            </summary>
+            <param name="User">Информация о текущем пользователе</param>
+            <param name="AccessToken">Токен аутентификации</param>
+        </member>
+        <member name="P:TestingMocks.Communication.LoginResponseDTO.User">
+            <summary>Информация о текущем пользователе</summary>
+        </member>
+        <member name="P:TestingMocks.Communication.LoginResponseDTO.AccessToken">
+            <summary>Токен аутентификации</summary>
+        </member>
+        <member name="T:TestingMocks.Communication.UserAuthDataDTO">
+            <summary>
+            Аутентификационные данные пользователя
+            </summary>
+        </member>
+        <member name="M:TestingMocks.Communication.UserAuthDataDTO.#ctor(System.String,System.String)">
+            <summary>
+            Создать аутентификационные данные пользователя
+            </summary>
+            <param name="username">Имя пользователя</param>
+            <param name="password">Пароль</param>
+        </member>
+        <member name="P:TestingMocks.Communication.UserAuthDataDTO.Username">
+            <summary>
+            Имя пользователя
+            </summary>
+            <remarks>
+            Длина от 3 до 32 символов
+            </remarks>
+        </member>
+        <member name="P:TestingMocks.Communication.UserAuthDataDTO.Password">
+            <summary>
+            Пароль
+            </summary>
+            <remarks>
+            Длина от 8 до 32 символов
+            </remarks>
+        </member>
+        <member name="T:TestingMocks.Communication.UserDetailsDTO">
+            <summary>
+            Детальная информация о пользователе
+            </summary>
+        </member>
+        <member name="P:TestingMocks.Communication.UserDetailsDTO.Name">
+            <summary>
+            Фактическое имя пользователя
+            </summary>
+            <remarks>
+            Длина от 2 до 64 символов
+            </remarks>
+        </member>
+        <member name="P:TestingMocks.Communication.UserDetailsDTO.Age">
+            <summary>
+            Возраст пользователя
+            </summary>
+            <remarks>
+            Значения от 0 до 128
+            </remarks>
+        </member>
+        <member name="P:TestingMocks.Communication.UserDetailsDTO.City">
+            <summary>
+            Город проживания пользователя
+            </summary>
+            <remarks>
+            Длина от 2 до 128 символов
+            </remarks>
+        </member>
+        <member name="M:TestingMocks.Communication.UserDetailsDTO.op_Explicit(TestingMocks.Models.UserDetails)~TestingMocks.Communication.UserDetailsDTO">
+            <summary>
+            Создать DTO из модели БД
+            </summary>
+            <param name="userDetails">Данные о пользователе</param>
+        </member>
+        <member name="T:TestingMocks.Communication.UserDTO">
+            <summary>
+            Данные о пользователе
+            </summary>
+            <param name="Username">Имя пользователя</param>
+            <param name="Details">Информация о пользователе</param>
+        </member>
+        <member name="M:TestingMocks.Communication.UserDTO.#ctor(System.String,TestingMocks.Communication.UserDetailsDTO)">
+            <summary>
+            Данные о пользователе
+            </summary>
+            <param name="Username">Имя пользователя</param>
+            <param name="Details">Информация о пользователе</param>
+        </member>
+        <member name="P:TestingMocks.Communication.UserDTO.Username">
+            <summary>Имя пользователя</summary>
+        </member>
+        <member name="P:TestingMocks.Communication.UserDTO.Details">
+            <summary>Информация о пользователе</summary>
+        </member>
+        <member name="M:TestingMocks.Communication.UserDTO.op_Explicit(TestingMocks.Models.User)~TestingMocks.Communication.UserDTO">
+            <summary>
+            Создать данные о пользователе из модели БД пользователя
+            </summary>
+            <param name="user">Данные о пользователе</param>
+        </member>
+    </members>
+</doc>

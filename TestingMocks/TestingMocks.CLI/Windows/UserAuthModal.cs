@@ -4,14 +4,28 @@ using TestingMocks.Communication;
 
 namespace TestingMocks.CLI.Windows;
 
+/// <summary>
+/// Окно аутентификацации и регистрации пользователя
+/// </summary>
 public class UserAuthModal : Window
 {
+    /// <summary>
+    /// Событие при входе в аккаунт
+    /// </summary>
     public event EventHandler<LoginResponseDTO>? OnLogin;
+    /// <summary>
+    /// Событие при регистрации
+    /// </summary>
     public event EventHandler<UserDTO>? OnRegister;
 
     private readonly Label label;
     private readonly Button applyButton;
 
+    /// <summary>
+    /// Создать окно аутентификацации и регистрации пользователя
+    /// </summary>
+    /// <param name="userService">Сервис работы с бэкендом</param>
+    /// <param name="isLogin">Использовать аутентификацию вместо регистрации</param>
     public UserAuthModal(UserService userService, bool isLogin)
     {
         Title = $"TestingMocks CLI (Ctrl + Q = назад/выход). {(isLogin ? "Вход" : "Регистрация")}.";

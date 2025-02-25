@@ -4,8 +4,15 @@ using TestingMocks.Communication;
 
 namespace TestingMocks.CLI.Windows;
 
+/// <summary>
+/// Окно просмотра списка пользователей
+/// </summary>
 public class ViewUsersModal : Window
 {
+    /// <summary>
+    /// Создать окно просмотра списка пользователей
+    /// </summary>
+    /// <param name="userService">Сервис работы с бэкендом</param>
     public ViewUsersModal(UserService userService)
     {
         Title = $"TestingMocks CLI (Ctrl + Q = назад/выход). Просмотр пользователей.";
