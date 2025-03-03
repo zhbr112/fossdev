@@ -7,10 +7,20 @@ using TestingMocks.UserApi.Configuration;
 
 namespace TestingMocks.UserApi.Services;
 
+/// <summary>
+/// Сервис для создания jwt
+/// </summary>
+/// <param name="jwtHandler">Используемый сервис для генерации токенов</param>
+/// <param name="options">Конфигурация jwt</param>
 public class JwtTokenService(JwtSecurityTokenHandler jwtHandler, IOptions<AuthConfiguration> options)
 {
     private readonly JwtConfiguration jwtOptions = options.Value.Jwt;
 
+    /// <summary>
+    /// Сгенерировать токен
+    /// </summary>
+    /// <param name="user">пользователь</param>
+    /// <returns>Токен</returns>
     public string GenerateAccessToken(User user)
     {
         var jwt = new JwtSecurityToken(

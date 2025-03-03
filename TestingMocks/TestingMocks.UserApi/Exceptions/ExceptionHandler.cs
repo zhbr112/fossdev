@@ -4,8 +4,17 @@ using TestingMocks.Communication;
 
 namespace TestingMocks.UserApi.Exceptions;
 
+/// <summary>
+/// Обработчик ошибок
+/// </summary>
 public class ExceptionHandler : IExceptionHandler
 {
+    /// <summary>
+    /// Обработать выброшеную ошибку
+    /// </summary>
+    /// <param name="httpContext">Контекст запроса</param>
+    /// <param name="exception">Ошибка</param>
+    /// <param name="cancellationToken">Сообщение</param>
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         var status = exception switch
