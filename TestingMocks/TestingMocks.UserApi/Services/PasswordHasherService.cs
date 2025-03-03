@@ -5,8 +5,17 @@ using TestingMocks.UserApi.Configuration;
 
 namespace TestingMocks.UserApi.Services;
 
+/// <summary>
+/// Сервис хэширования
+/// </summary>
+/// <param name="jwtConfig">Конфигурация jwt</param>
 public class PasswordHasherService(IOptions<AuthConfiguration> jwtConfig)
 {
+    /// <summary>
+    /// Захэшировать пароль
+    /// </summary>
+    /// <param name="password">Пароль</param>
+    /// <returns>Захэштрованный пароль</returns>
     public string HashPassword(string password)
     {
         var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
