@@ -11,3 +11,7 @@ _Левитан Всеволод, Степанов Ярослав_
 ## TestingMocks
 [README.md](./TestingMocks/README.md)
 [Папка TestingMocks](./TestingMocks/)
+
+## test-print
+[README.md](./test-print/README.md)
+[Папка TestingMocks](./test-print/)
