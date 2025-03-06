@@ -10,64 +10,84 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 class NoteApp:
+    """
+    Главный класс приложения "Заметки".
+    Отвечает за создание графического интерфейса, взаимодействие с базой данных
+    и управление заметками пользователей.
+    """
     def __init__(self, master):
+        """
+        Инициализирует приложение.
+
+        Args:
+            master (tk.Tk): Главное окно приложения.
+        """
         self.master = master
         master.title('Заметки')
         master.geometry('800x500')
 
-        self.db = sqlite3.connect("DB.db")
-        self.cur = self.db.cursor()
-        self.gl_user = ''
-        self.notes = {}
+        self.db = sqlite3.connect("DB.db")  # Подключение к базе данных SQLite
+        self.cur = self.db.cursor()  # Создание курсора для выполнения SQL-запросов
+        self.gl_user = ''  # Переменная для хранения email текущего пользователя
+        self.notes = {}  # Словарь для хранения заметок (не используется для хранения в бд)
 
-        self.create_tables()
-        self.create_gui()
-        self.master.mainloop()
+        self.create_tables()  # Создание таблиц в базе данных, если они не существуют
+        self.create_gui()  # Создание графического интерфейса
+        self.master.mainloop()  # Запуск основного цикла обработки событий
 
     def create_tables(self):
+        """
+        Создает таблицы Users и Notes в базе данных, если они не существуют.
+        """
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Users (
             fio    TEXT,
             email TEXT PRIMARY KEY,
             ps TEXT,   
             password Text  
         );
-        """)
+        """) # Таблица для хранения информации о пользователях
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Notes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT,
             title TEXT,   
             content Text  
         );
-        """)
-        self.db.commit()
+        """) # Таблица для хранения заметок пользователей
+        self.db.commit()  # Сохранение изменений в базе данных
 
     def create_gui(self):
+        """
+        Создает основной графический интерфейс приложения, включая вкладки.
+        """
         style1 = ttk.Style()
-        style1.configure("Myw.TLabel", background="#4682B4")
+        style1.configure("Myw.TLabel", background="#4682B4") # Настройка стиля для вкладок
 
-        # Form tabs
+        # Создание вкладок
         self.notebook = ttk.Notebook(self.master)
         self.notebook.pack(expand=True, fill=tk.BOTH)
-        self.frame1 = ttk.Frame(self.notebook, style="Myw.TLabel")
-        self.frame2 = ttk.Frame(self.notebook, style="Myw.TLabel")
+        self.frame1 = ttk.Frame(self.notebook, style="Myw.TLabel")  # Вкладка авторизации
+        self.frame2 = ttk.Frame(self.notebook, style="Myw.TLabel")  # Вкладка с заметками
 
         self.frame1.pack(fill=tk.BOTH, expand=True)
         self.frame2.pack(fill=tk.BOTH, expand=True)
         self.notebook.add(self.frame1, text="Авторизация")
         self.notebook.add(self.frame2, text="Ежедневник")
 
-        self.notebook.hide(1)
+        self.notebook.hide(1)  # Скрытие вкладки "Ежедневник" при запуске
 
-        self.create_auth_frame()
-        self.create_notes_frame()
+        self.create_auth_frame()  # Создание содержимого вкладки авторизации
+        self.create_notes_frame()  # Создание содержимого вкладки "Ежедневник"
 
     def create_auth_frame(self):
-        # Authorization Frame
+        """
+        Создает содержимое вкладки авторизации.
+        """
+        # Заголовок вкладки авторизации
         label = ttk.Label(self.frame1, text="Добро пожаловать в заметки!", background='#4682B4', foreground='#FFFFFF', font=("Arial", 18))
         label.pack(side=tk.TOP)
 
         columns = ("Fname", "Ps", "Email")
-        self.tree = ttk.Treeview(self.frame1, columns=columns, show="headings")
+        self.tree = ttk.Treeview(self.frame1, columns=columns, show="headings") # Создание таблицы для вывода пользователей
         self.tree.place(relx=0.02, rely=0.45, anchor='w')
 
         self.tree.heading("Fname", text="ФИО")
@@ -78,39 +98,47 @@ class NoteApp:
         self.tree.column("#2", stretch=NO, width=180)
         self.tree.column("#3", stretch=NO, width=180)
 
-        self.load_users()
+        self.load_users()  # Загрузка списка пользователей из базы данных
 
         position1 = {"width": 100, "height": 40, 'rely': 0, 'relx': 1, 'anchor': NE}
         list_el = ["Добавить", "Удалить", "Изменить"]
         list_fn = [self.window_add_user, self.del_user, self.window_update_user]
-        for i in range(3):
+        for i in range(3): # Добавление кнопок "Добавить", "Удалить", "Изменить"
             tk.Button(self.frame1, text=list_el[i], command=list_fn[i]).place(y=60 * i + 120, x=-13, **position1)
 
         position2 = {"width": 100, "height": 40, 'rely': 1, 'relx': 0, 'anchor': SE}
         list_el1 = ["Войти", "Выйти"]
         list_fn1 = [self.window_pass, self.master.destroy]
-        for i in range(2):
+        for i in range(2):  # Добавление кнопок "Войти", "Выйти"
             tk.Button(self.frame1, text=list_el1[i], command=list_fn1[i]).place(x=120 * i + 663, y=-3, **position2)
 
     def create_notes_frame(self):
-        # Notes Frame
+        """
+        Создает содержимое вкладки "Ежедневник".
+        """
+        # Создание панели вкладок для заметок
         self.notebook1 = ttk.Notebook(self.frame2)
         self.notebook1.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
 
         position3 = {"width": 120, "height": 40, 'rely': 1, 'relx': 0, 'anchor': SE}
         list_el2 = ["Новая заметка", "Удалить заметку"]
         list_fn2 = [self.add_notes, self.delete_notes]
-        for i in range(len(list_el2)):
+        for i in range(len(list_el2)): # Добавление кнопок "Новая заметка", "Удалить заметку"
             tk.Button(self.frame2, text=list_el2[i], command=list_fn2[i], background="#4682B4", foreground="#FFFFFF").place(x=140 * i + 620, y=-25, **position3)
     
     def load_users(self):
-        self.cur.execute('SELECT * FROM Users')
-        users = self.cur.fetchall()
+        """
+        Загружает список пользователей из базы данных и отображает их в таблице.
+        """
+        self.cur.execute('SELECT * FROM Users') # Выполнение запроса на выборку всех пользователей
+        users = self.cur.fetchall()  # Получение всех строк результата запроса
         for user in users:
-            self.tree.insert("", END, values=(user[0], user[2], user[1]))
-
+            self.tree.insert("", END, values=(user[0], user[2], user[1])) # Добавление строки в таблицу
 
     def window_pass(self):
+        """
+        Создает окно для ввода пароля пользователя.
+        """
         win1 = tk.Toplevel(self.master)
         win1.title("Введите пароль")
         win1.geometry("250x120")
@@ -118,22 +146,25 @@ class NoteApp:
         frame = ttk.Frame(win1, borderwidth=1, relief=tk.SOLID, padding=[8, 10])
         label = ttk.Label(frame, text='Пароль')
         label.pack(anchor=tk.NW)
-        entry_pass = ttk.Entry(frame, show="*") #hide password
+        entry_pass = ttk.Entry(frame, show="*") # Скрытие вводимого пароля
         entry_pass.pack(anchor=tk.NW)
         frame.pack(anchor=tk.NW, fill=tk.X, padx=5, pady=5)
 
         def sigin_in():
+            """
+            Проверяет введенный пароль и переключает на вкладку "Ежедневник", если пароль верен.
+            """
             try:
-                user = self.tree.item(self.tree.selection()[0])["values"][2]
+                user = self.tree.item(self.tree.selection()[0])["values"][2] # Получение email выбранного пользователя
                 self.cur.execute('SELECT password FROM Users WHERE email = ?', (user,))
-                password = self.cur.fetchall()
-                if password[0][0] == hashlib.sha256(entry_pass.get().encode()).hexdigest():
-                    self.notebook.select(1)
+                password = self.cur.fetchall() # Получение пароля из базы данных
+                if password[0][0] == hashlib.sha256(entry_pass.get().encode()).hexdigest(): # Сравнение введенного пароля с хешированным паролем из базы данных
+                    self.notebook.select(1) # Переключение на вкладку "Ежедневник"
                     for i in range(self.notebook1.index("end")):
                         self.notebook1.forget(0)
-                    self.gl_user = user
-                    self.load_notes()
-                    win1.destroy()
+                    self.gl_user = user # Сохранение email текущего пользователя
+                    self.load_notes() # Загрузка заметок пользователя
+                    win1.destroy() # Закрытие окна ввода пароля
                 else:
                     showerror(
                         title="Предупреждение",
@@ -147,11 +178,13 @@ class NoteApp:
         tk.Button(win1, text='ОК', command=sigin_in).place(rely=1, width=50, height=30, relx=0.5, anchor=tk.S, y=-20)
 
     def window_add_user(self):
+        """
+        Создает окно для добавления нового пользователя.
+        """
         win1 = tk.Toplevel(self.master)
         win1.title("Добавление")
         win1.geometry("250x350")
 
-        # ... (Code for user input frames remains the same)
         frame = ttk.Frame(win1, borderwidth=1, relief=tk.SOLID, padding=[8, 10])
         label = ttk.Label(frame, text='ФИО')
         label.pack(anchor=tk.NW)
@@ -176,26 +209,31 @@ class NoteApp:
         frame = ttk.Frame(win1, borderwidth=1, relief=tk.SOLID, padding=[8, 10])
         label = ttk.Label(frame, text='Пароль')
         label.pack(anchor=tk.NW)
-        entry_pass = ttk.Entry(frame, show="*") #hide password
+        entry_pass = ttk.Entry(frame, show="*") # Скрытие вводимого пароля
         entry_pass.pack(anchor=tk.NW)
         frame.pack(anchor=tk.NW, fill=tk.X, padx=5, pady=5)
 
         def add_user():
-            pers = Person(entry_fio.get(), entry_email.get(), entry_ps.get(), entry_pass.get())
+            """
+            Добавляет нового пользователя в базу данных.
+            """
+            pers = Person(entry_fio.get(), entry_email.get(), entry_ps.get(), entry_pass.get()) # Создание экземпляра класса Person
             self.cur.execute("INSERT INTO Users (fio, email, ps, password) VALUES (?, ?, ?, ?)",
-                        (pers.fio, pers.email, pers.ps, pers.password))
-            self.db.commit()
-            self.load_users()
-            win1.destroy()
+                        (pers.fio, pers.email, pers.ps, pers.password)) # Добавление пользователя в базу данных
+            self.db.commit() # Сохранение изменений
+            self.load_users() # Обновление таблицы пользователей
+            win1.destroy() # Закрытие окна
 
         tk.Button(win1, text='ОК', command=add_user).place(rely=1, width=50, height=30, relx=0.5, anchor=tk.S, y=-20)
 
     def window_update_user(self):
+        """
+        Создает окно для изменения данных пользователя.
+        """
         win1 = tk.Toplevel(self.master)
         win1.title("Измените данные")
         win1.geometry("250x350")
 
-        # ... (Code for user input frames remains the same)
         frame = ttk.Frame(win1, borderwidth=1, relief=tk.SOLID, padding=[8, 10])
         label = ttk.Label(frame, text='ФИО')
         label.pack(anchor=tk.NW)
@@ -220,35 +258,45 @@ class NoteApp:
         frame = ttk.Frame(win1, borderwidth=1, relief=tk.SOLID, padding=[8, 10])
         label = ttk.Label(frame, text='Пароль')
         label.pack(anchor=tk.NW)
-        entry_pass = ttk.Entry(frame, show="*") #hide password
+        entry_pass = ttk.Entry(frame, show="*") # Скрытие вводимого пароля
         entry_pass.pack(anchor=tk.NW)
         frame.pack(anchor=tk.NW, fill=tk.X, padx=5, pady=5)
 
         def update_user():
-            selected_item = self.tree.selection()
+            """
+            Изменяет данные пользователя в базе данных.
+            """
+            selected_item = self.tree.selection() # Получение выбранной строки в таблице
             if not selected_item:
                 showerror(title="Error", message="Please select a user to update.")
                 win1.destroy()
                 return
             
-            user_email = self.tree.item(selected_item[0])["values"][2]
-            self.cur.execute('DELETE FROM Users WHERE email = ?', (user_email,))
-            pers = Person(entry_fio.get(), entry_email.get(), entry_ps.get(), entry_pass.get())
+            user_email = self.tree.item(selected_item[0])["values"][2] # Получение email пользователя
+            self.cur.execute('DELETE FROM Users WHERE email = ?', (user_email,)) # Удаление данных пользователя
+            pers = Person(entry_fio.get(), entry_email.get(), entry_ps.get(), entry_pass.get()) # Создание экземпляра класса Person
             self.cur.execute("INSERT INTO Users (fio, email, ps, password) VALUES (?, ?, ?, ?)",
-                        (pers.fio, pers.email, pers.ps, pers.password))
-            self.db.commit()
-            self.load_users()
-            win1.destroy()
+                        (pers.fio, pers.email, pers.ps, pers.password)) # Добавление измененых данных
+            self.db.commit() # Сохранение изменений
+            self.load_users() # Обновление таблицы пользователей
+            win1.destroy() # Закрытие окна
 
         tk.Button(win1, text='ОК', command=update_user).place(rely=1, width=50, height=30, relx=0.5, anchor=tk.S, y=-20)
     
     def del_user(self):
-        for i in self.tree.selection():
-            self.cur.execute('DELETE FROM Users WHERE email = ?', (self.tree.item(i)["values"][2],))
-            self.tree.delete(i)
-        self.db.commit()
+        """
+        Удаляет выбранного пользователя из базы данных.
+        """
+        for i in self.tree.selection(): # Итерация по выбранным строкам
+            self.cur.execute('DELETE FROM Users WHERE email = ?', (self.tree.item(i)["values"][2],)) # Удаление пользователя из базы данных
+            self.tree.delete(i) # Удаление строки из таблицы
+        self.db.commit() # Сохранение изменений
+
 
     def add_notes(self):
+        """
+        Создает окно для добавления новой заметки.
+        """
         note_frame = ttk.Frame(self.notebook1)
         self.notebook1.add(note_frame, text="Новая заметка")
 
@@ -282,6 +330,9 @@ class NoteApp:
 
 
     def delete_notes(self):
+        """
+        Удаляет заметку
+        """
         try:
             current_tab = self.notebook1.index(self.notebook1.select())
             note_title = self.notebook1.tab(current_tab, "text")
@@ -294,6 +345,9 @@ class NoteApp:
             pass
         
     def load_notes(self):
+        """
+        Загружает заметки
+        """
         try:
             self.cur.execute('SELECT title, content FROM Notes WHERE email = ?', (self.gl_user,))
             note = self.cur.fetchall()
@@ -305,6 +359,9 @@ class NoteApp:
             showerror(title='предупреждение', message=f'Error => {e}')
             
     def __del__(self):
+        """
+        Закрывает приложение
+        """
         self.db.close()
 
 
