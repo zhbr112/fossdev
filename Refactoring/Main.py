@@ -289,29 +289,11 @@ def load_notes():
         showerror(title='предупреждение', message=f'Error => {e}')
 
 
-def email_send():
-    msg = MIMEMultipart()
-    with open("pass.txt") as f:
-        password = f.readline()
-    cur.execute('SELECT title, content FROM Notes WHERE email = ?', (gl_user,))
-    note = cur.fetchall()
-    message = ''
-    for title, content in note:
-        message += f'{title}: {content}\n'
-    msg['From'] = "arina.03857@mail.ru"
-    msg['To'] = gl_user
-    msg['Subject'] = "Заметки"
-    msg.attach(MIMEText(message, 'plain'))
-    server = smtplib.SMTP_SSL('smtp.mail.ru', 465) 
-    server.login(msg['From'], password)
-    server.sendmail(msg['From'], msg['To'], msg.as_string())
-    server.quit()
 
-
-list_el2 = ["Отпр на почту", "Новая заметка", "Удалить заметку"]
-list_fn2 = [email_send, add_notes, delete_notes]
-for i in range(3):
-    tk.Button(frame2, text=list_el2[i], command=list_fn2[i], background="#4682B4",foreground="#FFFFFF").place(x=120 * i + 520, y=-25, **position1)
+list_el2 = ["Новая заметка", "Удалить заметку"]
+list_fn2 = [add_notes, delete_notes]
+for i in range(2):
+    tk.Button(frame2, text=list_el2[i], command=list_fn2[i], background="#4682B4",foreground="#FFFFFF").place(x=120 * i + 650, y=-25, **position1)
 
 win.mainloop()
 db.commit()
