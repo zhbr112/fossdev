@@ -323,6 +323,7 @@ class NoteApp:
 
             note_content = tk.Text(self.notebook1, width=40, height=10)
             note_content.insert(tk.END, content)
+            
             self.notebook1.forget(self.notebook1.select())
             self.notebook1.add(note_content, text=title)
 
