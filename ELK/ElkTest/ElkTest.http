@@ -1,0 +1,6 @@
+@ElkTest_HostAddress = http://localhost:5240
+
+GET {{ElkTest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
