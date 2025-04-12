@@ -5,15 +5,18 @@ using ElkTest.Models;
 using Scalar.AspNetCore;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .WriteTo.Console()
-    .WriteTo.Http("http://192.168.1.2:50000", queueLimitBytes: null)
-    .CreateLogger();
-
 List<User> users = [];
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.Http(
+        builder.Configuration.GetValue<string>("LogstashUrl")
+            ?? throw new KeyNotFoundException("No Logstash URL provided."),
+        queueLimitBytes: null)
+    .CreateLogger();
 
 builder.Services.AddOpenApi();
 builder.Services.AddSerilog();
