@@ -31,6 +31,12 @@ filebeat.autodiscover:
                   paths:
                     - /var/lib/docker/containers/${data.container.id}/*-json.log
 
+filebeat.inputs:
+  - type: log
+    # Определяем путь к лог-файлам
+    paths:
+      - /var/app/log/*.log
+
 processors:
   - add_cloud_metadata: ~
 
@@ -41,9 +47,9 @@ monitoring:
     password: ${BEATS_SYSTEM_PASSWORD}
 
 output.elasticsearch:
-  hosts: [ http://elasticsearch:9200 ]
-  username: filebeat_internal
-  password: ${FILEBEAT_INTERNAL_PASSWORD}
+  hosts: [http://elasticsearch:9200]
+  username: elastic
+  password: 9G6q6di_0iSoeaVpxnrN
 
 ## HTTP endpoint for health checking
 ## https://www.elastic.co/guide/en/beats/filebeat/current/http-endpoint.html

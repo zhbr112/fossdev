@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
+using Elastic.CommonSchema.Serilog;
 using ElkTest.Models;
 using Scalar.AspNetCore;
 using Serilog;
+using Serilog.Formatting.Json;
 
 List<User> users = [];
 
@@ -12,10 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .WriteTo.Console()
-    .WriteTo.Http(
-        builder.Configuration.GetValue<string>("LogstashUrl")
-            ?? throw new KeyNotFoundException("No Logstash URL provided."),
-        queueLimitBytes: null)
+    .WriteTo.File(new EcsTextFormatter(), "logs/app.log")
+    // .WriteTo.Http(
+    //     builder.Configuration.GetValue<string>("LogstashUrl")
+    //         ?? throw new KeyNotFoundException("No Logstash URL provided."),
+    //     queueLimitBytes: null)
     .CreateLogger();
 
 builder.Services.AddOpenApi();
